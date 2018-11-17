@@ -1,9 +1,0 @@
-{application,cose,
-             [{applications,[kernel,stdlib,elixir,logger,jose,cbor]},
-              {description,"cose"},
-              {modules,['Elixir.COSE','Elixir.COSE.AsymmetricKey',
-                        'Elixir.COSE.AsymmetricKey.ECDSA','Elixir.COSE.CBOR',
-                        'Elixir.COSE.CWT.Claims','Elixir.COSE.Mac0',
-                        'Elixir.COSE.Sign1','Elixir.COSE.SymmetricKey']},
-              {registered,[]},
-              {vsn,"0.1.0"}]}.
