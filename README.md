@@ -1,6 +1,6 @@
 # WebAuthnEx
 
-**TODO: Add description**
+WebAuthn library for Elixir
 
 ## Installation
 
