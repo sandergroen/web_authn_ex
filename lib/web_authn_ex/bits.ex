@@ -1,4 +1,4 @@
-defmodule Bits do
+defmodule WebAuthnEx.Bits do
   # this is the public api which allows you to pass any binary representation
   def extract(str) when is_binary(str) do
     extract(str, [])

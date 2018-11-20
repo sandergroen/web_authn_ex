@@ -6,7 +6,6 @@ defmodule WebAuthnEx do
   @cred_param_ES256 %{type: "public-key", alg: -7}
   @user_id "1"
   @user_name "web-user"
-  @types %{create: "webauthn.create", get: "webauthn.get"}
 
   def credential_creation_options(rp_name, rp_id) do
     %{

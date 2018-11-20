@@ -20,5 +20,17 @@ defmodule WebauthnEx.EC2Key do
   def from_map(map) do
     %{@alg_label => algoritm, @crv_label => curve, @x_label => x_coordinate, @y_label => y_coordinate} = map
     new(algoritm, curve, x_coordinate, y_coordinate)
+    # case enforce_type(map) do
+    #   :ok -> new(algoritm, curve, x_coordinate, y_coordinate)
+    #   :error -> :error
+    # end
+  end
+
+  def enforce_type(map) do
+    %{@kty_label => label} = map
+    case label do
+      @kty_ec2 -> :ok
+      _ -> :error
+    end
   end
 end

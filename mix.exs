@@ -29,7 +29,7 @@ defmodule WebAuthnEx.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:cbor, github: "timofey-barmin/cbor-erlang"},
+      {:cbor_ex, github: "sandergroen/cbor_ex"},
       {:jason, "~> 1.0"},
     ]
   end

@@ -19,7 +19,7 @@ defmodule WebAuthnEx.AuthAttestationResponse do
   end
 
   def credential(attestation) do
-    WebAuthnEx.AuthenticatorResponse.authenticator_data(attestation)
+    WebAuthnEx.AuthenticatorResponse.authenticator_data(attestation).credential
   end
 
   def attestation(attestation_object) do
