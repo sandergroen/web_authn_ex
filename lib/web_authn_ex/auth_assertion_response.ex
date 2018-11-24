@@ -12,24 +12,11 @@ defmodule WebAuthnEx.AuthAssertionResponse do
      }}
   end
 
-  def valid?(
-        original_challenge,
-        original_origin,
-        allowed_credentials,
-        rp_id,
-        authenticator_data,
-        %AuthAssertionResponse{} = auth_assertion_response
-      ) do
-    WebAuthnEx.AuthenticatorResponse.valid?(
-      original_challenge,
-      original_origin,
-      rp_id,
-      authenticator_data
-    ) && valid_credential?(allowed_credentials, auth_assertion_response) &&
+  def valid?(original_challenge, original_origin, allowed_credentials, rp_id, authenticator_data, client_data_json, %AuthAssertionResponse{} = auth_assertion_response) do
+    WebAuthnEx.AuthenticatorResponse.valid?(original_challenge, original_origin, authenticator_data, rp_id, client_data_json) && valid_credential?(allowed_credentials, auth_assertion_response) &&
       allowed_credentials
       |> credential_public_key(auth_assertion_response.client_id)
-
-    # |> valid_signature?(auth_assertion_response.client_id, auth_assertion_response)
+      |> valid_signature?(auth_assertion_response.signature, client_data_json, auth_assertion_response.auth_data_bytes)
   end
 
   def valid_credential?(allowed_credentials, %AuthAssertionResponse{} = auth_assertion_response) do

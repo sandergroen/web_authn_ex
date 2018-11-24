@@ -2,6 +2,13 @@ defmodule WebAuthnEx.Bits do
   # this is the public api which allows you to pass any binary representation
   def extract(str) when is_binary(str) do
     extract(str, [])
+    |> Enum.reverse()
+  end
+
+  def insert(bits) when is_list(bits) do
+    bits
+    |> Enum.reverse()
+    |> Enum.into(<<>>, fn bit -> <<bit::1>> end)
   end
 
   # this function does the heavy lifting by matching the input binary to

@@ -32,8 +32,7 @@ defmodule AuthAssertionResponseTest do
 
   def flags do
     [1, 0, 1, 0, 0, 0, 1, 0]
-    |> Enum.reverse()
-    |> Enum.into(<<>>, fn bit -> <<bit::1>> end)
+    |> WebAuthnEx.Bits.insert()
   end
 
   def rp_id_hash do

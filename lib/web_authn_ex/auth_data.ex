@@ -63,7 +63,6 @@ defmodule WebAuthnEx.AuthData do
     |> Enum.slice(@rp_id_hash_length, @flags_length)
     |> :binary.list_to_bin()
     |> WebAuthnEx.Bits.extract()
-    |> Enum.reverse()
   end
 
   defp data_at(data, pos, length) do
