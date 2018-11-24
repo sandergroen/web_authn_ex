@@ -2,6 +2,8 @@
 
 WebAuthn library for Elixir
 
+[![Build Status](https://travis-ci.org/sandergroen/web_authn_ex.svg?branch=master)](https://travis-ci.org/sandergroen/web_authn_ex)
+
 ## Installation
 
 If [available in Hex](https://hex.pm/docs/publish), the package can be installed
