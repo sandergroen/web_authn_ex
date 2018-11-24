@@ -31,6 +31,7 @@ defmodule WebAuthnEx.MixProject do
     [
       {:cbor_ex, github: "sandergroen/cbor_ex"},
       {:jason, "~> 1.0"},
+      {:credo, "~> 1.0", only: [:dev, :test], runtime: false}
     ]
   end
 end

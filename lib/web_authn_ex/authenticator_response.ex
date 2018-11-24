@@ -6,20 +6,25 @@ defmodule WebAuthnEx.AuthenticatorResponse do
 
   def valid?(original_challenge, original_origin, attestation, rp_id, client_data_json) do
     authenticator_data = authenticator_data(attestation)
+    {:ok, client_data} = WebAuthnEx.ClientData.new(client_data_json)
+
     with true <- valid_type?(client_data_json, "webauthn.create"),
-        true <- valid_origin?(original_origin, client_data_json),
-        true <- valid_rp_id?(original_origin, authenticator_data, rp_id),
-        true <- WebAuthnEx.AuthData.valid?(authenticator_data),
-        true <- WebAuthnEx.AuthData.user_flagged?(authenticator_data)
-    do
+         true <- valid_challenge?(original_challenge, client_data),
+         true <- valid_origin?(original_origin, client_data),
+         true <- valid_rp_id?(original_origin, authenticator_data, rp_id),
+         true <- WebAuthnEx.AuthData.valid?(authenticator_data),
+         true <- WebAuthnEx.AuthData.user_flagged?(authenticator_data) do
       true
     else
       false -> false
     end
   end
 
-  def valid_origin?(original_origin, client_data_json) do
-    {:ok, client_data} = WebAuthnEx.ClientData.new(client_data_json)
+  def valid_challenge?(original_challenge, client_data) do
+    Base.url_decode64!(client_data.challenge, padding: false) == original_challenge
+  end
+
+  def valid_origin?(original_origin, client_data) do
     client_data.origin == original_origin
   end
 
@@ -28,12 +33,17 @@ defmodule WebAuthnEx.AuthenticatorResponse do
     WebAuthnEx.AuthData.new(auth_data)
   end
 
-
   def valid_rp_id?(original_origin, authenticator_data, nil) do
-    :crypto.hash(:sha256, rp_id_from_origin(original_origin)) == authenticator_data.rp_id_hash
+    case rp_id_from_origin(original_origin) do
+      {:ok, host} ->
+        :crypto.hash(:sha256, host) == authenticator_data.rp_id_hash
+
+      {:error, nil} ->
+        false
+    end
   end
 
-  def valid_rp_id?(original_origin, authenticator_data, rp_id) do
+  def valid_rp_id?(_, authenticator_data, rp_id) do
     :crypto.hash(:sha256, rp_id) == authenticator_data.rp_id_hash
   end
 

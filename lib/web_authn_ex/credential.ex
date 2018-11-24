@@ -4,6 +4,7 @@ defmodule WebAuthnEx.Credential do
 
   alias __MODULE__
   defstruct [:id, :credential]
+
   def new(auth_data) do
     %Credential{
       id: id(auth_data),
@@ -16,7 +17,11 @@ defmodule WebAuthnEx.Credential do
   end
 
   def public_key(auth_data) do
-    WebAuthnEx.PublicKeyU2f.to_str(WebAuthnEx.PublicKeyU2f.cose_key(data_at(auth_data, public_key_position(auth_data), public_key_length(auth_data))))
+    WebAuthnEx.PublicKeyU2f.to_str(
+      WebAuthnEx.PublicKeyU2f.cose_key(
+        data_at(auth_data, public_key_position(auth_data), public_key_length(auth_data))
+      )
+    )
   end
 
   def public_key_position(auth_data) do
@@ -34,7 +39,7 @@ defmodule WebAuthnEx.Credential do
   end
 
   def id_position do
-      @aaguid_length + @id_length
+    @aaguid_length + @id_length
   end
 
   def id_length(auth_data) do

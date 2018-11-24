@@ -19,3 +19,6 @@ Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_do
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
 be found at [https://hexdocs.pm/web_authn_ex](https://hexdocs.pm/web_authn_ex).
 
+# Contributing
+Bug reports and pull requests are welcome on GitHub at [https://github.com/sandergroen/web_authn_ex](https://github.com/sandergroen/web_authn_ex).
+

@@ -10,6 +10,7 @@ defmodule WebAuthnEx.AuthData do
 
   alias __MODULE__
   defstruct [:credential, :rp_id_hash, :sign_count, :flags]
+
   def new(auth_data) do
     %AuthData{
       credential: credential(auth_data),
@@ -24,7 +25,7 @@ defmodule WebAuthnEx.AuthData do
   end
 
   def user_flagged?(%AuthData{} = auth_data) do
-    user_present?(auth_data) && user_verified?(auth_data)
+    user_present?(auth_data) || user_verified?(auth_data)
   end
 
   def user_present?(%AuthData{} = auth_data) do
@@ -40,7 +41,7 @@ defmodule WebAuthnEx.AuthData do
   end
 
   def credential(auth_data) do
-    WebAuthnEx.Credential.new(data_at(auth_data, base_length))
+    WebAuthnEx.Credential.new(data_at(auth_data, base_length()))
   end
 
   defp rp_id_hash(auth_data) do
@@ -57,12 +58,12 @@ defmodule WebAuthnEx.AuthData do
   end
 
   defp flags(data) do
-      data
-      |> :binary.bin_to_list()
-      |> Enum.slice(@rp_id_hash_length, @flags_length)
-      |> :binary.list_to_bin()
-      |> WebAuthnEx.Bits.extract()
-      |> Enum.reverse()
+    data
+    |> :binary.bin_to_list()
+    |> Enum.slice(@rp_id_hash_length, @flags_length)
+    |> :binary.list_to_bin()
+    |> WebAuthnEx.Bits.extract()
+    |> Enum.reverse()
   end
 
   defp data_at(data, pos, length) do
@@ -75,7 +76,8 @@ defmodule WebAuthnEx.AuthData do
   defp data_at(data, pos) do
     length = byte_size(data) - pos
 
-    :binary.bin_to_list(data)
+    data
+    |> :binary.bin_to_list()
     |> Enum.slice(pos..(pos + length - 1))
     |> :binary.list_to_bin()
   end

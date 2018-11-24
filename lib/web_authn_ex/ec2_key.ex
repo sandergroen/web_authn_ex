@@ -6,11 +6,16 @@ defmodule WebauthnEx.EC2Key do
   @kty_ec2 2
   @kty_label 1
 
-
   alias __MODULE__
   defstruct [:algorithm, :curve, :x_coordinate, :y_coordinate]
+
   def new(algorithm, curve, x_coordinate, y_coordinate) do
-    %EC2Key{algorithm: algorithm, curve: curve, x_coordinate: x_coordinate, y_coordinate: y_coordinate}
+    %EC2Key{
+      algorithm: algorithm,
+      curve: curve,
+      x_coordinate: x_coordinate,
+      y_coordinate: y_coordinate
+    }
   end
 
   def from_cbor(cbor) do
@@ -18,7 +23,13 @@ defmodule WebauthnEx.EC2Key do
   end
 
   def from_map(map) do
-    %{@alg_label => algoritm, @crv_label => curve, @x_label => x_coordinate, @y_label => y_coordinate} = map
+    %{
+      @alg_label => algoritm,
+      @crv_label => curve,
+      @x_label => x_coordinate,
+      @y_label => y_coordinate
+    } = map
+
     new(algoritm, curve, x_coordinate, y_coordinate)
     # case enforce_type(map) do
     #   :ok -> new(algoritm, curve, x_coordinate, y_coordinate)
@@ -28,6 +39,7 @@ defmodule WebauthnEx.EC2Key do
 
   def enforce_type(map) do
     %{@kty_label => label} = map
+
     case label do
       @kty_ec2 -> :ok
       _ -> :error

@@ -3,7 +3,7 @@ defmodule WebAuthnExTest do
 
   doctest WebAuthnEx
   @credential_options WebAuthnEx.credential_creation_options("web-server", "example.com")
-  @credential_request_options WebAuthnEx.credential_request_options
+  @credential_request_options WebAuthnEx.credential_request_options()
 
   test "credential_options has a 32 byte length challenge" do
     assert byte_size(@credential_options.challenge) == 32

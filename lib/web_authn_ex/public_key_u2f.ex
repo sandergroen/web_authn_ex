@@ -3,10 +3,10 @@ defmodule WebAuthnEx.PublicKeyU2f do
 
   def valid?(data) do
     cose_key = cose_key(data)
+
     byte_size(data) >= @coordinate_length * 2 &&
-    byte_size(cose_key.x_coordinate) == @coordinate_length &&
-    byte_size(cose_key.y_coordinate) == @coordinate_length &&
-    cose_key.algorithm == -7
+      byte_size(cose_key.x_coordinate) == @coordinate_length &&
+      byte_size(cose_key.y_coordinate) == @coordinate_length && cose_key.algorithm == -7
   end
 
   @spec cose_key(binary() | [number()]) :: WebauthnEx.EC2Key.t()

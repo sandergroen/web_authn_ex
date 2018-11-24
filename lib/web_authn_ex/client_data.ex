@@ -9,12 +9,12 @@ defmodule WebAuthnEx.ClientData do
   end
 
   def extract_data(json, client_data_json) do
-    {:ok, %ClientData{
-        type: json["type"],
-        challenge: json["challenge"],
-        origin: json["origin"],
-        hash: :crypto.hash(:sha256, client_data_json)
-      }
-    }
+    {:ok,
+     %ClientData{
+       type: json["type"],
+       challenge: json["challenge"],
+       origin: json["origin"],
+       hash: :crypto.hash(:sha256, client_data_json)
+     }}
   end
 end
