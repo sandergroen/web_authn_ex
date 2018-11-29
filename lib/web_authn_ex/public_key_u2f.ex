@@ -9,7 +9,6 @@ defmodule WebAuthnEx.PublicKeyU2f do
       byte_size(cose_key.y_coordinate) == @coordinate_length && cose_key.algorithm == -7
   end
 
-  @spec cose_key(binary() | [number()]) :: WebauthnEx.EC2Key.t()
   def cose_key(data) do
     WebauthnEx.EC2Key.from_cbor(data)
   end

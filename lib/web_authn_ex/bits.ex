@@ -1,7 +1,9 @@
 defmodule WebAuthnEx.Bits do
+  # Credits: https://minhajuddin.com/2016/11/01/how-to-extract-bits-from-a-binary-in-elixir/
   # this is the public api which allows you to pass any binary representation
   def extract(str) when is_binary(str) do
-    extract(str, [])
+    str
+    |> extract([])
     |> Enum.reverse()
   end
 

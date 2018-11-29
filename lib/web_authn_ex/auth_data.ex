@@ -20,8 +20,11 @@ defmodule WebAuthnEx.AuthData do
     }
   end
 
-  def valid?(%AuthData{} = auth_data) do
-    attested_credential_data?(auth_data)
+  def valid?(%AuthData{} = auth_data, data) do
+    case attested_credential_data?(auth_data) do
+      true -> byte_size(data) > base_length() && WebAuthnEx.Credential.valid?(data)
+      false -> byte_size(data) == base_length()
+    end
   end
 
   def user_flagged?(%AuthData{} = auth_data) do

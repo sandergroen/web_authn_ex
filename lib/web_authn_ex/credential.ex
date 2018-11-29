@@ -13,7 +13,9 @@ defmodule WebAuthnEx.Credential do
   end
 
   def credential(auth_data) do
-    {{:ECPoint, public_key(auth_data)}, {:namedCurve, :prime256v1}}
+    if id(auth_data) do
+      {{:ECPoint, public_key(auth_data)}, {:namedCurve, :prime256v1}}
+    end
   end
 
   def public_key(auth_data) do
