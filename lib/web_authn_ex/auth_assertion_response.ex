@@ -1,6 +1,8 @@
 defmodule WebAuthnEx.AuthAssertionResponse do
+  @moduledoc """
+  Validates assertion
+  """
   alias WebAuthnEx.AuthenticatorResponse
-
   alias __MODULE__
   @enforce_keys [:credential_id, :auth_data_bytes, :signature]
   defstruct [:credential_id, :auth_data_bytes, :signature]

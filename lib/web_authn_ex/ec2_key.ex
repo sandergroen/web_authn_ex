@@ -1,4 +1,7 @@
 defmodule WebauthnEx.EC2Key do
+  @moduledoc """
+  Creates EC2Key
+  """
   @alg_label 3
   @crv_label -1
   @x_label -2

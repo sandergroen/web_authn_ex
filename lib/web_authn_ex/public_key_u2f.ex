@@ -1,4 +1,7 @@
 defmodule WebAuthnEx.PublicKeyU2f do
+  @moduledoc """
+  Validates PublicKeyU2f
+  """
   alias WebauthnEx.EC2Key
   @coordinate_length 32
 

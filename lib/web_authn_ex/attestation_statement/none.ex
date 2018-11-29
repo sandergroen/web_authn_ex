@@ -1,4 +1,7 @@
 defmodule WebAuthnEx.AttestationStatement.None do
+  @moduledoc """
+  Verifies None attestation statement
+  """
   alias __MODULE__
   @enforce_keys [:statement]
   defstruct [:statement]

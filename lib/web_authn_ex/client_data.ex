@@ -1,4 +1,8 @@
 defmodule WebAuthnEx.ClientData do
+  @moduledoc """
+    WebAuthnEx.ClientData decodes client_data_json to ClientData struct
+  """
+
   alias __MODULE__
   defstruct type: nil, challenge: nil, origin: nil, hash: nil
 

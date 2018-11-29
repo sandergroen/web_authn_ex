@@ -1,4 +1,7 @@
 defmodule WebAuthnEx.AuthAttestationResponse do
+  @moduledoc """
+  Validates attestation
+  """
   alias __MODULE__
   @enforce_keys [:attestation, :credential]
   defstruct [:attestation, :credential]

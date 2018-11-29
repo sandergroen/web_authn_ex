@@ -1,4 +1,7 @@
 defmodule WebAuthnEx.Credential do
+  @moduledoc """
+  WebAuthnEx.Credential creates public key from binary data
+  """
   alias WebAuthnEx.PublicKeyU2f
   @aaguid_length 16
   @id_length 2

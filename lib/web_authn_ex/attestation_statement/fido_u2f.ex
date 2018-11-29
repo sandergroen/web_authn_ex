@@ -1,4 +1,7 @@
 defmodule WebAuthnEx.AttestationStatement.FidoU2f do
+  @moduledoc """
+  Verifies FidoU2F attestation statement
+  """
   alias __MODULE__
   @enforce_keys [:statement]
   defstruct [:statement]

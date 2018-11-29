@@ -1,6 +1,6 @@
 defmodule WebAuthnEx do
   @moduledoc """
-  Documentation for WebAuthnEx.
+  WebAuthnEx implement https://www.w3.org/TR/webauthn/ for Elixir.
   """
   # credo:disable-for-next-line
   @cred_param_ES256 %{type: "public-key", alg: -7}

@@ -1,4 +1,7 @@
 defmodule WebAuthnEx.AuthData do
+  @moduledoc """
+  Validates authenticator data
+  """
   alias WebAuthnEx.{Bits, Credential}
   alias __MODULE__
 

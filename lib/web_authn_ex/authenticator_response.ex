@@ -1,4 +1,7 @@
 defmodule WebAuthnEx.AuthenticatorResponse do
+  @moduledoc """
+  Validates authenticator
+  """
   alias __MODULE__
   @enforce_keys [:client_data]
   defstruct [:client_data]
