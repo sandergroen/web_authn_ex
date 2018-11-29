@@ -1,4 +1,7 @@
 defmodule WebAuthnEx.AuthData do
+  alias WebAuthnEx.{Bits, Credential}
+  alias __MODULE__
+
   @rp_id_hash_position 0
   @rp_id_hash_length 32
   @flags_length 1
@@ -8,9 +11,7 @@ defmodule WebAuthnEx.AuthData do
   @user_verified_flag_position 2
   @attested_credential_data_included_flag_position 6
 
-  alias __MODULE__
   defstruct [:credential, :rp_id_hash, :sign_count, :flags]
-
   def new(auth_data) do
     %AuthData{
       credential: credential(auth_data),
@@ -22,7 +23,7 @@ defmodule WebAuthnEx.AuthData do
 
   def valid?(%AuthData{} = auth_data, data) do
     case attested_credential_data?(auth_data) do
-      true -> byte_size(data) > base_length() && WebAuthnEx.Credential.valid?(data)
+      true -> byte_size(data) > base_length() && Credential.valid?(data)
       false -> byte_size(data) == base_length()
     end
   end
@@ -65,7 +66,7 @@ defmodule WebAuthnEx.AuthData do
     |> :binary.bin_to_list()
     |> Enum.slice(@rp_id_hash_length, @flags_length)
     |> :binary.list_to_bin()
-    |> WebAuthnEx.Bits.extract()
+    |> Bits.extract()
   end
 
   defp data_at(data, pos, length) do

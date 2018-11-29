@@ -1,4 +1,5 @@
 defmodule WebAuthnEx.Credential do
+  alias WebAuthnEx.PublicKeyU2f
   @aaguid_length 16
   @id_length 2
 
@@ -19,8 +20,8 @@ defmodule WebAuthnEx.Credential do
   end
 
   def public_key(auth_data) do
-    WebAuthnEx.PublicKeyU2f.to_str(
-      WebAuthnEx.PublicKeyU2f.cose_key(
+    PublicKeyU2f.to_str(
+      PublicKeyU2f.cose_key(
         data_at(auth_data, public_key_position(auth_data), public_key_length(auth_data))
       )
     )

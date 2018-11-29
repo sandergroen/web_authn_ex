@@ -1,4 +1,6 @@
 defmodule WebAuthnEx.AuthAssertionResponse do
+  alias WebAuthnEx.AuthenticatorResponse
+
   alias __MODULE__
   @enforce_keys [:credential_id, :auth_data_bytes, :signature]
   defstruct [:credential_id, :auth_data_bytes, :signature]
@@ -12,17 +14,28 @@ defmodule WebAuthnEx.AuthAssertionResponse do
      }}
   end
 
-  def valid?(original_challenge, original_origin, allowed_credentials, rp_id, client_data_json, %AuthAssertionResponse{} = auth_assertion_response) do
-    WebAuthnEx.AuthenticatorResponse.valid?(
+  def valid?(
+        original_challenge,
+        original_origin,
+        allowed_credentials,
+        rp_id,
+        client_data_json,
+        %AuthAssertionResponse{} = auth_assertion_response
+      ) do
+    AuthenticatorResponse.valid?(
       original_challenge,
       original_origin,
       auth_assertion_response.auth_data_bytes,
       rp_id,
       client_data_json
     ) && valid_credential?(allowed_credentials, auth_assertion_response) &&
-    allowed_credentials
+      allowed_credentials
       |> credential_public_key(auth_assertion_response.credential_id)
-      |> valid_signature?(auth_assertion_response.signature, client_data_json, auth_assertion_response.auth_data_bytes)
+      |> valid_signature?(
+        auth_assertion_response.signature,
+        client_data_json,
+        auth_assertion_response.auth_data_bytes
+      )
   end
 
   def valid_credential?(allowed_credentials, %AuthAssertionResponse{} = auth_assertion_response) do

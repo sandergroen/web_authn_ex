@@ -7,10 +7,12 @@ defmodule WebAuthnEx.AuthenticatorResponse do
   def valid?(original_challenge, original_origin, attestation, rp_id, client_data_json) do
     authenticator_data = authenticator_data(attestation)
     {:ok, client_data} = WebAuthnEx.ClientData.new(client_data_json)
-    auth_data = case is_binary(attestation) do
-      true -> attestation
-      false -> attestation["authData"]
-    end
+
+    auth_data =
+      case is_binary(attestation) do
+        true -> attestation
+        false -> attestation["authData"]
+      end
 
     with true <- valid_type?(client_data_json, client_data.type),
          true <- valid_challenge?(original_challenge, client_data),
@@ -36,7 +38,8 @@ defmodule WebAuthnEx.AuthenticatorResponse do
     WebAuthnEx.AuthData.new(authenticator_data)
   end
 
-  def authenticator_data(%{"authData" => auth_data} = authenticator_data) when is_map(authenticator_data) do
+  def authenticator_data(%{"authData" => auth_data} = authenticator_data)
+      when is_map(authenticator_data) do
     auth_data |> WebAuthnEx.AuthData.new()
   end
 

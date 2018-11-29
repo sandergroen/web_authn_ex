@@ -1,10 +1,11 @@
 defmodule WebAuthnEx.AttestationStatement do
+  alias WebAuthnEx.AttestationStatement.{FidoU2f, None}
   def from("fido-u2f", statement) do
-    WebAuthnEx.AttestationStatement.FidoU2f.new(statement)
+    FidoU2f.new(statement)
   end
 
   def from("none", statement) do
-    WebAuthnEx.AttestationStatement.None.new(statement)
+    None.new(statement)
   end
 
   # def from("packed", statement) do
@@ -20,11 +21,15 @@ defmodule WebAuthnEx.AttestationStatement do
   end
 
   def valid?("none", authenticator_data, client_data_hash, attestation_statement) do
-    WebAuthnEx.AttestationStatement.None.valid?(authenticator_data, client_data_hash, attestation_statement)
+    None.valid?(
+      authenticator_data,
+      client_data_hash,
+      attestation_statement
+    )
   end
 
   def valid?("fido-u2f", authenticator_data, client_data_hash, attestation_statement) do
-    WebAuthnEx.AttestationStatement.FidoU2f.valid?(
+    FidoU2f.valid?(
       authenticator_data,
       client_data_hash,
       attestation_statement

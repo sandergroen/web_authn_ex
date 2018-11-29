@@ -40,6 +40,7 @@ defmodule WebAuthnEx.AttestationStatement.FidoU2f do
     !!(fido2.statement["x5c"] && fido2.statement["sig"]) &&
       length(fido2.statement["x5c"]) == @valid_attestation_certificate_count
   end
+
   def signature(fido2) do
     fido2.statement["sig"]
   end

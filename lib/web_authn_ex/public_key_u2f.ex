@@ -1,4 +1,5 @@
 defmodule WebAuthnEx.PublicKeyU2f do
+  alias WebauthnEx.EC2Key
   @coordinate_length 32
 
   def valid?(data) do
@@ -10,7 +11,7 @@ defmodule WebAuthnEx.PublicKeyU2f do
   end
 
   def cose_key(data) do
-    WebauthnEx.EC2Key.from_cbor(data)
+    EC2Key.from_cbor(data)
   end
 
   def to_str(key) do
