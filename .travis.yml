@@ -1,3 +1,6 @@
 language: elixir
 elixir: '1.7.3'
 otp_release: '21.1.1'
+script:
+  - mix credo
+  - mix test
