@@ -3,7 +3,7 @@ defmodule WebAuthnEx.MixProject do
   @version "0.1.0"
 
   @description """
-  WebAuthn library for Elixir.
+  Implementation of a WebAuthn Relying Party in Elixir.
   """
 
   def project do
@@ -14,8 +14,16 @@ defmodule WebAuthnEx.MixProject do
       start_permanent: Mix.env() == :prod,
       name: "WebAuthnEx",
       description: @description,
+      docs: [
+        main: "readme",
+        source_url: "https://github.com/sandergroen/web_authn_ex",
+        extras: [
+          "README.md"
+        ]
+      ],
       source_url: "https://github.com/sandergroen/web_authn_ex",
-      deps: deps()
+      deps: deps(),
+      package: package()
     ]
   end
 
@@ -32,6 +40,14 @@ defmodule WebAuthnEx.MixProject do
       {:cbor_ex, github: "sandergroen/cbor_ex"},
       {:jason, "~> 1.0"},
       {:credo, "~> 1.0", only: [:dev, :test], runtime: false}
+    ]
+  end
+
+  defp package do
+    [
+      maintainers: ["Sander Groen"],
+      licenses: ["MIT"],
+      links: %{"GitHub" => "https://github.com/sandergroen/web_authn_ex"}
     ]
   end
 end
