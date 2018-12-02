@@ -7,27 +7,30 @@ defmodule WebAuthnEx.Credential do
   @id_length 2
 
   alias __MODULE__
-  defstruct [:id, :credential]
+  defstruct [:id, :public_key]
 
   def new(auth_data) do
     %Credential{
       id: id(auth_data),
-      credential: credential(auth_data)
+      public_key: credential(auth_data)
     }
   end
 
   def credential(auth_data) do
     if id(auth_data) do
-      {{:ECPoint, public_key(auth_data)}, {:namedCurve, :prime256v1}}
+      public_key = auth_data
+      |> public_key()
+      |> PublicKeyU2f.cose_key()
+      |> PublicKeyU2f.to_binary()
+
+      {{:ECPoint, public_key}, {:namedCurve, :prime256v1}}
     end
   end
 
   def public_key(auth_data) do
-    PublicKeyU2f.to_str(
-      PublicKeyU2f.cose_key(
-        data_at(auth_data, public_key_position(auth_data), public_key_length(auth_data))
-      )
-    )
+    auth_data
+    |> data_at(public_key_position(auth_data), public_key_length(auth_data))
+    |> PublicKeyU2f.new()
   end
 
   def public_key_position(auth_data) do
@@ -54,7 +57,10 @@ defmodule WebAuthnEx.Credential do
   end
 
   def valid?(data) do
-    byte_size(data) >= @aaguid_length + @id_length
+    byte_size(data) >= @aaguid_length + @id_length &&
+      data
+      |> public_key()
+      |> WebAuthnEx.PublicKeyU2f.valid?()
   end
 
   defp data_at(data, pos, length) do

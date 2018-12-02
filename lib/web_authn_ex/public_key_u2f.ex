@@ -3,21 +3,29 @@ defmodule WebAuthnEx.PublicKeyU2f do
   Validates PublicKeyU2f
   """
   alias WebauthnEx.EC2Key
+  alias __MODULE__
   @coordinate_length 32
 
-  def valid?(data) do
-    cose_key = cose_key(data)
+  defstruct [:data]
 
-    byte_size(data) >= @coordinate_length * 2 &&
-      byte_size(cose_key.x_coordinate) == @coordinate_length &&
-      byte_size(cose_key.y_coordinate) == @coordinate_length && cose_key.algorithm == -7
+  def new(data) do
+    %PublicKeyU2f{
+      data: data
+    }
   end
 
-  def cose_key(data) do
-    EC2Key.from_cbor(data)
+  def valid?(%PublicKeyU2f{} = public_key) do
+    byte_size(public_key.data) >= @coordinate_length * 2 &&
+      byte_size(cose_key(public_key).x_coordinate) == @coordinate_length &&
+      byte_size(cose_key(public_key).y_coordinate) == @coordinate_length &&
+      cose_key(public_key).algorithm == -7
   end
 
-  def to_str(key) do
+  def cose_key(%PublicKeyU2f{} = public_key) do
+    EC2Key.from_cbor(public_key.data)
+  end
+
+  def to_binary(key) do
     <<4>> <> key.x_coordinate <> key.y_coordinate
   end
 end

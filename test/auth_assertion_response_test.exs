@@ -22,7 +22,7 @@ defmodule AuthAssertionResponseTest do
            )
   end
 
-  def allowed_credentials(%FakeAuthenticator{} = authenticator) do
+  defp allowed_credentials(%FakeAuthenticator{} = authenticator) do
     {public_key, _} = authenticator.credential_key
 
     [

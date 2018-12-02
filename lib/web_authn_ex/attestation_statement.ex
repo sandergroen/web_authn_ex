@@ -3,6 +3,7 @@ defmodule WebAuthnEx.AttestationStatement do
   Verifies attestation statement of various types.
   """
   alias WebAuthnEx.AttestationStatement.{FidoU2f, None}
+
   def from("fido-u2f", statement) do
     FidoU2f.new(statement)
   end

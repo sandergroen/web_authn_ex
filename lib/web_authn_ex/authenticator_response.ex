@@ -3,13 +3,14 @@ defmodule WebAuthnEx.AuthenticatorResponse do
   Validates authenticator
   """
   alias __MODULE__
+  alias WebAuthnEx.{AuthData, ClientData}
   @enforce_keys [:client_data]
   defstruct [:client_data]
   def new(client_data), do: {:ok, %AuthenticatorResponse{client_data: client_data}}
 
   def valid?(original_challenge, original_origin, attestation, rp_id, client_data_json) do
     authenticator_data = authenticator_data(attestation)
-    {:ok, client_data} = WebAuthnEx.ClientData.new(client_data_json)
+    {:ok, client_data} = ClientData.new(client_data_json)
 
     auth_data =
       case is_binary(attestation) do
@@ -21,8 +22,8 @@ defmodule WebAuthnEx.AuthenticatorResponse do
          true <- valid_challenge?(original_challenge, client_data),
          true <- valid_origin?(original_origin, client_data),
          true <- valid_rp_id?(original_origin, authenticator_data, rp_id),
-         true <- WebAuthnEx.AuthData.valid?(authenticator_data, auth_data),
-         true <- WebAuthnEx.AuthData.user_flagged?(authenticator_data) do
+         true <- AuthData.valid?(authenticator_data, auth_data),
+         true <- AuthData.user_flagged?(authenticator_data) do
       true
     else
       false -> false
@@ -38,12 +39,12 @@ defmodule WebAuthnEx.AuthenticatorResponse do
   end
 
   def authenticator_data(authenticator_data) when is_binary(authenticator_data) do
-    WebAuthnEx.AuthData.new(authenticator_data)
+    AuthData.new(authenticator_data)
   end
 
   def authenticator_data(%{"authData" => auth_data} = authenticator_data)
       when is_map(authenticator_data) do
-    auth_data |> WebAuthnEx.AuthData.new()
+    auth_data |> AuthData.new()
   end
 
   def valid_rp_id?(original_origin, authenticator_data, nil) do
@@ -61,7 +62,7 @@ defmodule WebAuthnEx.AuthenticatorResponse do
   end
 
   def valid_type?(client_data_json, type) do
-    {:ok, client_data} = WebAuthnEx.ClientData.new(client_data_json)
+    {:ok, client_data} = ClientData.new(client_data_json)
     client_data.type == type
   end
 

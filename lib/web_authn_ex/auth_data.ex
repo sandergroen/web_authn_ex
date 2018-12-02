@@ -15,6 +15,7 @@ defmodule WebAuthnEx.AuthData do
   @attested_credential_data_included_flag_position 6
 
   defstruct [:credential, :rp_id_hash, :sign_count, :flags]
+
   def new(auth_data) do
     %AuthData{
       credential: credential(auth_data),
@@ -26,7 +27,7 @@ defmodule WebAuthnEx.AuthData do
 
   def valid?(%AuthData{} = auth_data, data) do
     case attested_credential_data?(auth_data) do
-      true -> byte_size(data) > base_length() && Credential.valid?(data)
+      true -> byte_size(data) > base_length() && Credential.valid?(data_at(data, base_length()))
       false -> byte_size(data) == base_length()
     end
   end
@@ -48,7 +49,7 @@ defmodule WebAuthnEx.AuthData do
   end
 
   def credential(auth_data) do
-    WebAuthnEx.Credential.new(data_at(auth_data, base_length()))
+    Credential.new(data_at(auth_data, base_length()))
   end
 
   defp rp_id_hash(auth_data) do

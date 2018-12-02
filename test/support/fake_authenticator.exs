@@ -3,38 +3,34 @@ defmodule FakeAuthenticator do
   @enforce_keys [:challenge, :rp_id, :sign_count, :context, :type]
   defstruct [:challenge, :rp_id, :sign_count, :context, :type]
 
-  def get(
-        options \\ %{
-          challenge: fake_challenge(),
-          rp_id: "localhost",
-          sign_count: 0,
-          context: %{attested_credential_data_present: false}
-        }
-      ) do
-    options.challenge
-    |> new(options.rp_id, options.sign_count, options.context, "webauthn.get")
+  def get(options \\ %{context: %{}}) do
+    context = %{attested_credential_data_present: false}
+    |> Map.merge(options.context)
+
+    %{challenge: fake_challenge(), rp_id: "localhost", sign_count: 0}
+    |> Map.merge(options)
+    |> Map.put(:context, context)
+    |> new("webauthn.get")
     |> signature()
   end
 
-  def create(
-        options \\ %{
-          challenge: fake_challenge(),
-          rp_id: "localhost",
-          sign_count: 0,
-          context: %{attested_credential_data_present: true}
-        }
-      ) do
-    options.challenge
-    |> new(options.rp_id, options.sign_count, options.context, "webauthn.create")
+  def create(options \\ %{context: %{}}) do
+    context = %{attested_credential_data_present: true}
+    |> Map.merge(options.context)
+
+    %{challenge: fake_challenge(), rp_id: "localhost", sign_count: 0}
+    |> Map.merge(options)
+    |> Map.put(:context, context)
+    |> new("webauthn.create")
     |> attestation_object()
   end
 
-  defp new(challenge, rp_id, sign_count, context, type) do
+  defp new(options, type) do
     %FakeAuthenticator{
-      challenge: challenge,
-      rp_id: rp_id,
-      sign_count: sign_count,
-      context: context,
+      challenge: options.challenge,
+      rp_id: options.rp_id,
+      sign_count: options.sign_count,
+      context: options.context,
       type: type
     }
     |> raw_flags()

@@ -57,7 +57,7 @@ defmodule WebAuthnEx.AttestationStatement.FidoU2f do
 
   def verification_data(authenticator_data, client_data_hash) do
     {{:ECPoint, public_key}, {:namedCurve, :prime256v1}} =
-      authenticator_data.credential.credential
+      authenticator_data.credential.public_key
 
     <<0>> <>
       authenticator_data.rp_id_hash <>

@@ -3,6 +3,7 @@ defmodule WebAuthnEx.AuthAttestationResponse do
   Validates attestation
   """
   alias __MODULE__
+  alias WebAuthnEx.{AttestationStatement, AuthenticatorResponse, ClientData}
   @enforce_keys [:attestation, :credential]
   defstruct [:attestation, :credential]
 
@@ -14,16 +15,16 @@ defmodule WebAuthnEx.AuthAttestationResponse do
   def valid?(original_challenge, original_origin, rp_id, attestation_object, client_data_json) do
     attestation = attestation(attestation_object)
     attestation_statement = attestation_statement(attestation)
-    {:ok, client_data} = WebAuthnEx.ClientData.new(client_data_json)
+    {:ok, client_data} = ClientData.new(client_data_json)
 
-    WebAuthnEx.AuthenticatorResponse.valid?(
+    AuthenticatorResponse.valid?(
       original_challenge,
       original_origin,
       attestation,
       rp_id,
       client_data_json
     ) &&
-      WebAuthnEx.AttestationStatement.valid?(
+      AttestationStatement.valid?(
         attestation["fmt"],
         authenticator_data(attestation),
         client_data.hash,
@@ -33,13 +34,13 @@ defmodule WebAuthnEx.AuthAttestationResponse do
 
   def attestation_statement(attestation) do
     {:ok, statement} =
-      WebAuthnEx.AttestationStatement.from(attestation["fmt"], attestation["attStmt"])
+      AttestationStatement.from(attestation["fmt"], attestation["attStmt"])
 
     statement
   end
 
   def authenticator_data(attestation) do
-    WebAuthnEx.AuthenticatorResponse.authenticator_data(attestation)
+    AuthenticatorResponse.authenticator_data(attestation)
   end
 
   defp credential(attestation) do
