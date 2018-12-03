@@ -33,8 +33,7 @@ defmodule WebAuthnEx.AuthAttestationResponse do
   end
 
   def attestation_statement(attestation) do
-    {:ok, statement} =
-      AttestationStatement.from(attestation["fmt"], attestation["attStmt"])
+    {:ok, statement} = AttestationStatement.from(attestation["fmt"], attestation["attStmt"])
 
     statement
   end

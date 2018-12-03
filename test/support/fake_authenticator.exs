@@ -4,8 +4,9 @@ defmodule FakeAuthenticator do
   defstruct [:challenge, :rp_id, :sign_count, :context, :type]
 
   def get(options \\ %{context: %{}}) do
-    context = %{attested_credential_data_present: false}
-    |> Map.merge(options.context)
+    context =
+      %{attested_credential_data_present: false}
+      |> Map.merge(options.context)
 
     %{challenge: fake_challenge(), rp_id: "localhost", sign_count: 0}
     |> Map.merge(options)
@@ -14,9 +15,22 @@ defmodule FakeAuthenticator do
     |> signature()
   end
 
+  def get_wrong_type(options \\ %{context: %{}}) do
+    context =
+      %{attested_credential_data_present: false}
+      |> Map.merge(options.context)
+
+    %{challenge: fake_challenge(), rp_id: "localhost", sign_count: 0}
+    |> Map.merge(options)
+    |> Map.put(:context, context)
+    |> new("webauthn.create")
+    |> signature()
+  end
+
   def create(options \\ %{context: %{}}) do
-    context = %{attested_credential_data_present: true}
-    |> Map.merge(options.context)
+    context =
+      %{attested_credential_data_present: true}
+      |> Map.merge(options.context)
 
     %{challenge: fake_challenge(), rp_id: "localhost", sign_count: 0}
     |> Map.merge(options)
@@ -64,6 +78,11 @@ defmodule FakeAuthenticator do
     )
   end
 
+  def public_key(credential_key) do
+    {public_key, _} = credential_key
+    public_key
+  end
+
   def credential_key(%FakeAuthenticator{} = authenticator) do
     authenticator
     |> Map.put(:credential_key, :crypto.generate_key(:ecdh, :prime256v1))
@@ -92,7 +111,8 @@ defmodule FakeAuthenticator do
   end
 
   def credential_id(%FakeAuthenticator{} = authenticator) do
-    authenticator |> Map.put(:credential_id, 16 |> :crypto.strong_rand_bytes())
+    authenticator
+    |> Map.put(:credential_id, 16 |> :crypto.strong_rand_bytes())
   end
 
   def rp_id_hash(rp_id) do

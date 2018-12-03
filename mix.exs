@@ -12,18 +12,10 @@ defmodule WebAuthnEx.MixProject do
       version: @version,
       elixir: "~> 1.7",
       start_permanent: Mix.env() == :prod,
-      name: "WebAuthnEx",
-      description: @description,
-      docs: [
-        main: "readme",
-        source_url: "https://github.com/sandergroen/web_authn_ex",
-        extras: [
-          "README.md"
-        ]
-      ],
-      source_url: "https://github.com/sandergroen/web_authn_ex",
       deps: deps(),
-      package: package()
+      description: @description,
+      package: package(),
+      docs: docs()
     ]
   end
 
@@ -48,6 +40,19 @@ defmodule WebAuthnEx.MixProject do
       maintainers: ["Sander Groen"],
       licenses: ["MIT"],
       links: %{"GitHub" => "https://github.com/sandergroen/web_authn_ex"}
+    ]
+  end
+
+  defp docs do
+    [
+      main: "readme",
+      name: "WebAuthnEx",
+      source_ref: "v#{@version}",
+      canonical: "https://hexdocs.pm/web_auth_ex",
+      source_url: "https://github.com/sandergroen/web_authn_ex",
+      extras: [
+        "README.md"
+      ]
     ]
   end
 end

@@ -18,10 +18,11 @@ defmodule WebAuthnEx.Credential do
 
   def credential(auth_data) do
     if id(auth_data) do
-      public_key = auth_data
-      |> public_key()
-      |> PublicKeyU2f.cose_key()
-      |> PublicKeyU2f.to_binary()
+      public_key =
+        auth_data
+        |> public_key()
+        |> PublicKeyU2f.cose_key()
+        |> PublicKeyU2f.to_binary()
 
       {{:ECPoint, public_key}, {:namedCurve, :prime256v1}}
     end
