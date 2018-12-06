@@ -13,11 +13,11 @@ defmodule WebAuthnEx.AttestationStatement do
   end
 
   # def from("packed", statement) do
-  #   WebAuthnEx.AttestationStatement.FidoU2f.new(statement)
+  #   WebAuthnEx.AttestationStatement.Packed.new(statement)
   # end
 
   # def from("android-safetynet", statement) do
-  #   WebAuthnEx.AttestationStatement.FidoU2f.new(statement)
+  #   WebAuthnEx.AttestationStatement.AndroidSafetynet.new(statement)
   # end
 
   def from(format, _statement) do
