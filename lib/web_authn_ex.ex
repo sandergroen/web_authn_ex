@@ -7,12 +7,16 @@ defmodule WebAuthnEx do
   @user_id "1"
   @user_name "web-user"
 
-  def credential_creation_options(rp_name, rp_id) do
+  def credential_creation_options(rp_name, rp_id \\ nil) do
+    rp = %{name: rp_name, rp_id: rp_id}
+    |> Enum.filter(fn {_, v} -> v != nil end)
+    |> Enum.into(%{})
+
     %{
       challenge: challenge(),
       # credo:disable-for-next-line
       pubKeyCredParams: [@cred_param_ES256],
-      rp: %{name: rp_name, id: rp_id},
+      rp: rp,
       user: %{name: @user_name, displayName: @user_name, id: @user_id}
     }
   end
