@@ -8,9 +8,10 @@ defmodule WebAuthnEx do
   @user_name "web-user"
 
   def credential_creation_options(rp_name, rp_id \\ nil) do
-    rp = %{name: rp_name, rp_id: rp_id}
-    |> Enum.filter(fn {_, v} -> v != nil end)
-    |> Enum.into(%{})
+    rp =
+      %{name: rp_name, rp_id: rp_id}
+      |> Enum.filter(fn {_, v} -> v != nil end)
+      |> Enum.into(%{})
 
     %{
       challenge: challenge(),

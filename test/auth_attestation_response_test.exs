@@ -10,16 +10,14 @@ defmodule AuthAttestationResponseTest do
     authenticator =
       FakeAuthenticator.create(%{challenge: original_challenge, context: %{origin: origin}})
 
-    assert AuthAttestationResponse.valid?(
-             original_challenge,
-             origin,
-             "localhost",
-             authenticator.attestation_object,
-             authenticator.client_data_json
-           )
-
     {:ok, auth_attestation_response} =
-      AuthAttestationResponse.new(authenticator.attestation_object)
+      AuthAttestationResponse.new(
+        original_challenge,
+        origin,
+        authenticator.attestation_object,
+        authenticator.client_data_json,
+        authenticator.rp_id
+      )
 
     credential = auth_attestation_response.credential
     assert is_binary(credential.id)
@@ -43,13 +41,14 @@ defmodule AuthAttestationResponseTest do
       "eyJjaGFsbGVuZ2UiOiIxMUN6YUZYZXp4N1lzek5hWUUzcGFnIiwiY2xpZW50RXh0ZW5zaW9ucyI6e30sImhhc2hBbGdvcml0aG0iOiJTSEEtMjU2Iiwib3JpZ2luIjoiaHR0cDovL2xvY2FsaG9zdDozMDAwIiwidHlwZSI6IndlYmF1dGhuLmNyZWF0ZSJ9"
       |> Base.decode64()
 
-    assert WebAuthnEx.AuthAttestationResponse.valid?(
-             original_challenge,
-             original_origin,
-             "localhost",
-             attestation_object,
-             client_data_json
-           )
+    assert {:ok, auth_attestation_response} =
+             AuthAttestationResponse.new(
+               original_challenge,
+               original_origin,
+               attestation_object,
+               client_data_json,
+               "localhost"
+             )
   end
 
   test "origin validation matches the default one" do
@@ -62,13 +61,14 @@ defmodule AuthAttestationResponseTest do
 
     origin = "http://localhost"
 
-    assert WebAuthnEx.AuthAttestationResponse.valid?(
-             original_challenge,
-             origin,
-             "localhost",
-             authenticator.attestation_object,
-             authenticator.client_data_json
-           )
+    assert {:ok, auth_attestation_response} =
+             AuthAttestationResponse.new(
+               original_challenge,
+               origin,
+               authenticator.attestation_object,
+               authenticator.client_data_json,
+               "localhost"
+             )
   end
 
   test "origin validation doesn't match the default one" do
@@ -81,13 +81,14 @@ defmodule AuthAttestationResponseTest do
 
     origin = "http://invalid"
 
-    refute WebAuthnEx.AuthAttestationResponse.valid?(
-             original_challenge,
-             origin,
-             "localhost",
-             authenticator.attestation_object,
-             authenticator.client_data_json
-           )
+    assert {:error, "Validation of authenticator failed!"} =
+             AuthAttestationResponse.new(
+               original_challenge,
+               origin,
+               authenticator.attestation_object,
+               authenticator.client_data_json,
+               "localhost"
+             )
   end
 
   test "rp_id validation matches the default one" do
@@ -99,13 +100,14 @@ defmodule AuthAttestationResponseTest do
       %{challenge: original_challenge, rp_id: rp_id, context: %{origin: original_origin}}
       |> FakeAuthenticator.create()
 
-    assert WebAuthnEx.AuthAttestationResponse.valid?(
-             original_challenge,
-             original_origin,
-             "localhost",
-             authenticator.attestation_object,
-             authenticator.client_data_json
-           )
+    assert {:ok, auth_attestation_response} =
+             AuthAttestationResponse.new(
+               original_challenge,
+               original_origin,
+               authenticator.attestation_object,
+               authenticator.client_data_json,
+               "localhost"
+             )
   end
 
   test "rp_id validation doesn't match the default one" do
@@ -117,13 +119,14 @@ defmodule AuthAttestationResponseTest do
       %{challenge: original_challenge, rp_id: rp_id, context: %{origin: original_origin}}
       |> FakeAuthenticator.create()
 
-    refute WebAuthnEx.AuthAttestationResponse.valid?(
-             original_challenge,
-             original_origin,
-             "localhost",
-             authenticator.attestation_object,
-             authenticator.client_data_json
-           )
+    assert {:error, "Validation of authenticator failed!"} =
+             AuthAttestationResponse.new(
+               original_challenge,
+               original_origin,
+               authenticator.attestation_object,
+               authenticator.client_data_json,
+               "localhost"
+             )
   end
 
   test "rp_id validation matches one explicitly given" do
@@ -135,12 +138,13 @@ defmodule AuthAttestationResponseTest do
       %{challenge: original_challenge, rp_id: rp_id, context: %{origin: original_origin}}
       |> FakeAuthenticator.create()
 
-    assert WebAuthnEx.AuthAttestationResponse.valid?(
-             original_challenge,
-             original_origin,
-             "custom",
-             authenticator.attestation_object,
-             authenticator.client_data_json
-           )
+    assert {:ok, auth_attestation_response} =
+             AuthAttestationResponse.new(
+               original_challenge,
+               original_origin,
+               authenticator.attestation_object,
+               authenticator.client_data_json,
+               "custom"
+             )
   end
 end
