@@ -44,7 +44,7 @@ defmodule WebAuthnEx.Credential do
 
   def id(auth_data) do
     if valid?(auth_data) do
-      data_at(auth_data, id_position(), id_length(auth_data))
+      auth_data |> :binary.part(id_position(), id_length(auth_data))
     end
   end
 
@@ -53,7 +53,7 @@ defmodule WebAuthnEx.Credential do
   end
 
   def id_length(auth_data) do
-    <<number::big-integer-size(16)>> = data_at(auth_data, @aaguid_length, @id_length)
+    <<number::big-integer-size(16)>> = auth_data |> :binary.part(@aaguid_length, @id_length)
     number
   end
 

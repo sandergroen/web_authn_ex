@@ -26,8 +26,11 @@ defmodule WebAuthnEx.AuthData do
   end
 
   def valid?(%AuthData{} = auth_data, data) do
+    length = byte_size(data) - base_length()
+    credential_data = data |> :binary.part(base_length(), length)
+
     case attested_credential_data?(auth_data) do
-      true -> byte_size(data) > base_length() && Credential.valid?(data_at(data, base_length()))
+      true -> byte_size(data) > base_length() && Credential.valid?(credential_data)
       false -> byte_size(data) == base_length()
     end
   end
@@ -49,11 +52,16 @@ defmodule WebAuthnEx.AuthData do
   end
 
   def credential(auth_data) do
-    Credential.new(data_at(auth_data, base_length()))
+    length = byte_size(auth_data) - base_length()
+
+    auth_data
+    |> :binary.part(base_length(), length)
+    |> Credential.new()
   end
 
   defp rp_id_hash(auth_data) do
-    data_at(auth_data, @rp_id_hash_position, @rp_id_hash_length)
+    auth_data
+    |> :binary.part(@rp_id_hash_position, @rp_id_hash_length)
   end
 
   defp base_length do
@@ -61,31 +69,15 @@ defmodule WebAuthnEx.AuthData do
   end
 
   defp sign_count(data) do
-    <<number::big-integer-size(32)>> = data_at(data, @sign_count_position, @sign_count_length)
+    <<number::big-integer-size(32)>> =
+      data |> :binary.part(@sign_count_position, @sign_count_length)
+
     number
   end
 
   defp flags(data) do
     data
-    |> :binary.bin_to_list()
-    |> Enum.slice(@rp_id_hash_length, @flags_length)
-    |> :binary.list_to_bin()
+    |> :binary.part(@rp_id_hash_length, @flags_length)
     |> Bits.extract()
-  end
-
-  defp data_at(data, pos, length) do
-    data
-    |> :binary.bin_to_list()
-    |> Enum.slice(pos..(pos + length - 1))
-    |> :binary.list_to_bin()
-  end
-
-  defp data_at(data, pos) do
-    length = byte_size(data) - pos
-
-    data
-    |> :binary.bin_to_list()
-    |> Enum.slice(pos..(pos + length - 1))
-    |> :binary.list_to_bin()
   end
 end
