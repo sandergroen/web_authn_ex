@@ -136,7 +136,7 @@ defmodule FakeAuthenticator do
     authenticator
     |> Map.put(
       :attestation_object,
-      CborEx.encode(%{
+      WebAuthnEx.Cbor.encode(%{
         "fmt" => "none",
         "attStmt" => %{},
         "authData" => authenticator.authenticator_data
@@ -210,7 +210,7 @@ defmodule FakeAuthenticator do
     alg_es256 = -7
     crv_p256 = 1
 
-    CborEx.encode(%{
+    WebAuthnEx.Cbor.encode(%{
       kty_label => kty_ec2,
       alg_label => options.algorithm || alg_es256,
       crv_label => crv_p256,

@@ -22,7 +22,7 @@ defmodule WebauthnEx.EC2Key do
   end
 
   def from_cbor(cbor) do
-    from_map(:cbor.decode(cbor))
+    from_map(WebAuthnEx.Cbor.decode!(cbor))
   end
 
   def from_map(map) do

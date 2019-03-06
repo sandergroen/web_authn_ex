@@ -121,6 +121,6 @@ defmodule WebAuthnEx.AuthAttestationResponse do
   end
 
   defp attestation(attestation_object) do
-    :cbor.decode(attestation_object)
+    WebAuthnEx.Cbor.decode!(attestation_object)
   end
 end
