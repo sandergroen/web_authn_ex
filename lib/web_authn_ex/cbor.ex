@@ -1,6 +1,8 @@
 defmodule WebAuthnEx.Cbor do
-  alias WebAuthnEx.Cbor.Encoder
-  alias WebAuthnEx.Cbor.Decoder
+  @moduledoc """
+  Implementation of CBOR (rfc7049) encoder and decoder.
+  """
+  alias WebAuthnEx.Cbor.{Decoder, Encoder}
 
   def encode(value) do
     Encoder.encode(value)

@@ -1,4 +1,8 @@
 defmodule WebAuthnEx.Cbor.Decoder do
+  @moduledoc """
+  Decodes CBOR objects.
+  """
+
   alias WebAuthnEx.Cbor.Types
 
   @unsigned_integer Types.unsigned_integer()
@@ -49,13 +53,13 @@ defmodule WebAuthnEx.Cbor.Decoder do
   end
 
   defp read_array(value) do
-    {length, rest} = read_unsigned_integer(value)
+    {size, rest} = read_unsigned_integer(value)
 
-    if length == 0 do
+    if size == 0 do
       {[], rest}
     else
       {values, rest} =
-        Enum.reduce(1..length, {[], rest}, fn _, {acc, rest} ->
+        Enum.reduce(1..size, {[], rest}, fn _, {acc, rest} ->
           {value, rest} = read(rest)
           {[value | acc], rest}
         end)

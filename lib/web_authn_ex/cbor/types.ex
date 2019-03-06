@@ -1,4 +1,7 @@
 defmodule WebAuthnEx.Cbor.Types do
+  @moduledoc """
+  Types for CBOR objects.
+  """
   @unsigned_integer <<0b000::3>>
   @negative_integer <<0b001::3>>
   @byte_string <<0b010::3>>

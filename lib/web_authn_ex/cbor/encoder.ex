@@ -1,4 +1,7 @@
 defmodule WebAuthnEx.Cbor.Encoder do
+  @moduledoc """
+  Encodes CBOR objects.
+  """
   alias WebAuthnEx.Cbor.Types
 
   def encode(value) do
@@ -35,7 +38,7 @@ defmodule WebAuthnEx.Cbor.Encoder do
 
   def encode_array(value) do
     length = encode_unsigned_int(length(value))
-    values = Enum.map(value, &encode/1) |> Enum.join()
+    values = value |> Enum.map(&encode/1) |> Enum.join()
 
     concat(length, values)
   end
