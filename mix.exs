@@ -30,7 +30,8 @@ defmodule WebAuthnEx.MixProject do
   defp deps do
     [
       {:jason, "~> 1.0"},
-      {:credo, "~> 1.0", only: [:dev, :test], runtime: false}
+      {:credo, "~> 1.0", only: [:dev, :test], runtime: false},
+      {:ex_doc, ">= 0.0.0", only: :dev}
     ]
   end
 
