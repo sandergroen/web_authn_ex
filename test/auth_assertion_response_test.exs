@@ -15,20 +15,15 @@ defmodule AuthAssertionResponseTest do
   @authenticator_data @authenticator.authenticator_data
 
   test "is valid if everything's in place" do
-    {:ok, auth_response} =
-      WebAuthnEx.AuthAssertionResponse.new(
-        @credential_id,
-        @authenticator_data,
-        @authenticator.signature
-      )
-
-    assert WebAuthnEx.AuthAssertionResponse.valid?(
+    assert WebAuthnEx.AuthAssertionResponse.new(
+             @credential_id,
+             @authenticator_data,
+             @authenticator.signature,
              @original_challenge,
              @original_origin,
              @allowed_credentials,
              @authenticator.rp_id,
-             @authenticator.client_data_json,
-             auth_response
+             @authenticator.client_data_json
            )
   end
 
@@ -43,20 +38,15 @@ defmodule AuthAssertionResponseTest do
       | @allowed_credentials
     ]
 
-    {:ok, auth_response} =
-      WebAuthnEx.AuthAssertionResponse.new(
-        @credential_id,
-        @authenticator_data,
-        @authenticator.signature
-      )
-
-    assert WebAuthnEx.AuthAssertionResponse.valid?(
+    assert WebAuthnEx.AuthAssertionResponse.new(
+             @credential_id,
+             @authenticator_data,
+             @authenticator.signature,
              @original_challenge,
              @original_origin,
              allowed_credentials,
              @authenticator.rp_id,
-             @authenticator.client_data_json,
-             auth_response
+             @authenticator.client_data_json
            )
   end
 
@@ -72,21 +62,17 @@ defmodule AuthAssertionResponseTest do
       }
     ]
 
-    {:ok, auth_response} =
-      WebAuthnEx.AuthAssertionResponse.new(
-        @credential_id,
-        @authenticator_data,
-        @authenticator.signature
-      )
-
-    refute WebAuthnEx.AuthAssertionResponse.valid?(
-             @original_challenge,
-             @original_origin,
-             allowed_credentials,
-             @authenticator.rp_id,
-             @authenticator.client_data_json,
-             auth_response
-           )
+    assert {:error, "Validation of signature failed!"} =
+             WebAuthnEx.AuthAssertionResponse.new(
+               @credential_id,
+               @authenticator_data,
+               @authenticator.signature,
+               @original_challenge,
+               @original_origin,
+               allowed_credentials,
+               @authenticator.rp_id,
+               @authenticator.client_data_json
+             )
   end
 
   test "is invalid if credential id is not among the allowed ones" do
@@ -97,20 +83,15 @@ defmodule AuthAssertionResponseTest do
       }
     ]
 
-    {:ok, auth_response} =
-      WebAuthnEx.AuthAssertionResponse.new(
-        @credential_id,
-        @authenticator_data,
-        @authenticator.signature
-      )
-
-    refute WebAuthnEx.AuthAssertionResponse.valid?(
+    refute WebAuthnEx.AuthAssertionResponse.new(
+             @credential_id,
+             @authenticator_data,
+             @authenticator.signature,
              @original_challenge,
              @original_origin,
              allowed_credentials,
              @authenticator.rp_id,
-             @authenticator.client_data_json,
-             auth_response
+             @authenticator.client_data_json
            )
   end
 
@@ -121,21 +102,17 @@ defmodule AuthAssertionResponseTest do
         context: %{origin: @original_origin}
       })
 
-    {:ok, auth_response} =
-      WebAuthnEx.AuthAssertionResponse.new(
-        @credential_id,
-        authenticator.authenticator_data,
-        authenticator.signature
-      )
-
-    refute WebAuthnEx.AuthAssertionResponse.valid?(
-             @original_challenge,
-             @original_origin,
-             @allowed_credentials,
-             authenticator.rp_id,
-             authenticator.client_data_json,
-             auth_response
-           )
+    assert {:error, "Validation of authenticator failed!"} =
+             WebAuthnEx.AuthAssertionResponse.new(
+               @credential_id,
+               authenticator.authenticator_data,
+               authenticator.signature,
+               @original_challenge,
+               @original_origin,
+               @allowed_credentials,
+               authenticator.rp_id,
+               authenticator.client_data_json
+             )
   end
 
   test "user present validation is invalid if user flags are off" do
@@ -149,57 +126,45 @@ defmodule AuthAssertionResponseTest do
         }
       })
 
-    {:ok, auth_response} =
-      WebAuthnEx.AuthAssertionResponse.new(
-        @credential_id,
-        authenticator.authenticator_data,
-        authenticator.signature
-      )
-
-    refute WebAuthnEx.AuthAssertionResponse.valid?(
-             @original_challenge,
-             @original_origin,
-             @allowed_credentials,
-             authenticator.rp_id,
-             authenticator.client_data_json,
-             auth_response
-           )
+    assert {:error, "Validation of authenticator failed!"} =
+             WebAuthnEx.AuthAssertionResponse.new(
+               @credential_id,
+               authenticator.authenticator_data,
+               authenticator.signature,
+               @original_challenge,
+               @original_origin,
+               @allowed_credentials,
+               authenticator.rp_id,
+               authenticator.client_data_json
+             )
   end
 
   test "challenge validation is invalid if challenge doesn't match" do
-    {:ok, auth_response} =
-      WebAuthnEx.AuthAssertionResponse.new(
-        @credential_id,
-        @authenticator.authenticator_data,
-        @authenticator.signature
-      )
-
-    refute WebAuthnEx.AuthAssertionResponse.valid?(
-             FakeAuthenticator.fake_challenge(),
-             @original_origin,
-             @allowed_credentials,
-             @authenticator.rp_id,
-             @authenticator.client_data_json,
-             auth_response
-           )
+    assert {:error, "Validation of authenticator failed!"} =
+             WebAuthnEx.AuthAssertionResponse.new(
+               @credential_id,
+               @authenticator.authenticator_data,
+               @authenticator.signature,
+               FakeAuthenticator.fake_challenge(),
+               @original_origin,
+               @allowed_credentials,
+               @authenticator.rp_id,
+               @authenticator.client_data_json
+             )
   end
 
   test "origin validation is invalid if origin doesn't match" do
-    {:ok, auth_response} =
-      WebAuthnEx.AuthAssertionResponse.new(
-        @credential_id,
-        @authenticator.authenticator_data,
-        @authenticator.signature
-      )
-
-    refute WebAuthnEx.AuthAssertionResponse.valid?(
-             @original_challenge,
-             "http://different-origin",
-             @allowed_credentials,
-             @authenticator.rp_id,
-             @authenticator.client_data_json,
-             auth_response
-           )
+    assert {:error, "Validation of authenticator failed!"} =
+             WebAuthnEx.AuthAssertionResponse.new(
+               @credential_id,
+               @authenticator.authenticator_data,
+               @authenticator.signature,
+               @original_challenge,
+               "http://different-origin",
+               @allowed_credentials,
+               @authenticator.rp_id,
+               @authenticator.client_data_json
+             )
   end
 
   test "rp_id validation is invalid if rp_id_hash doesn't match" do
@@ -212,21 +177,17 @@ defmodule AuthAssertionResponseTest do
         }
       })
 
-    {:ok, auth_response} =
-      WebAuthnEx.AuthAssertionResponse.new(
-        @credential_id,
-        authenticator.authenticator_data,
-        authenticator.signature
-      )
-
-    refute WebAuthnEx.AuthAssertionResponse.valid?(
-             @original_challenge,
-             @original_origin,
-             @allowed_credentials,
-             authenticator.rp_id,
-             authenticator.client_data_json,
-             auth_response
-           )
+    assert {:error, "Validation of signature failed!"} =
+             WebAuthnEx.AuthAssertionResponse.new(
+               @credential_id,
+               authenticator.authenticator_data,
+               authenticator.signature,
+               @original_challenge,
+               @original_origin,
+               @allowed_credentials,
+               authenticator.rp_id,
+               authenticator.client_data_json
+             )
   end
 
   test "when rp_id is explicitly given is valid if correct rp_id is given" do
@@ -246,20 +207,15 @@ defmodule AuthAssertionResponseTest do
       }
     ]
 
-    {:ok, auth_response} =
-      WebAuthnEx.AuthAssertionResponse.new(
-        authenticator.credential_id,
-        authenticator.authenticator_data,
-        authenticator.signature
-      )
-
-    assert WebAuthnEx.AuthAssertionResponse.valid?(
+    assert WebAuthnEx.AuthAssertionResponse.new(
+             authenticator.credential_id,
+             authenticator.authenticator_data,
+             authenticator.signature,
              @original_challenge,
              @original_origin,
              allowed_credentials,
              "different-rp_id",
-             authenticator.client_data_json,
-             auth_response
+             authenticator.client_data_json
            )
   end
 end
