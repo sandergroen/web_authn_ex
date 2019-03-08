@@ -82,7 +82,15 @@ defmodule WebAuthnEx.AuthAssertionResponse do
       client_data_json
     )
     |> valid_credential?()
-    |> valid_signature?(client_data_json)
+    |> valid_signature?(
+      credential_public_key(
+        auth_assertion_response.allowed_credentials,
+        auth_assertion_response.credential_id
+      ),
+      auth_assertion_response.signature,
+      client_data_json,
+      auth_assertion_response.auth_data_bytes
+    )
   end
 
   def valid_authenticator_response?(
@@ -125,37 +133,38 @@ defmodule WebAuthnEx.AuthAssertionResponse do
 
   def valid_signature?(
         auth_assertion_response,
-        client_data_json
+        public_key_bytes,
+        signature,
+        client_data_json,
+        authenticator_data_bytes
       ) do
-    public_key_bytes = auth_assertion_response |> credential_public_key()
-    client_data_hash = :crypto.hash(:sha256, client_data_json)
-    public_key = {{:ECPoint, public_key_bytes}, {:namedCurve, :prime256v1}}
+    if auth_assertion_response.valid_credential do
+      client_data_hash = :crypto.hash(:sha256, client_data_json)
+      public_key = {{:ECPoint, public_key_bytes}, {:namedCurve, :prime256v1}}
 
-    signature_valid =
-      :public_key.verify(
-        auth_assertion_response.auth_data_bytes <> client_data_hash,
-        :sha256,
-        auth_assertion_response.signature,
-        public_key
-      )
+      signature_valid =
+        :public_key.verify(
+          authenticator_data_bytes <> client_data_hash,
+          :sha256,
+          signature,
+          public_key
+        )
 
-    case signature_valid do
-      true ->
-        %AuthAssertionResponse{auth_assertion_response | valid_signature: true}
+      case signature_valid do
+        true ->
+          %AuthAssertionResponse{auth_assertion_response | valid_signature: true}
 
-      false ->
-        %AuthAssertionResponse{auth_assertion_response | valid_signature: false}
+        false ->
+          %AuthAssertionResponse{auth_assertion_response | valid_signature: false}
+      end
+    else
+      %AuthAssertionResponse{auth_assertion_response | valid_signature: false}
     end
   end
 
-  def credential_public_key(auth_assertion_response) do
-    if auth_assertion_response.valid_credential do
-      matched_credential =
-        Enum.find(auth_assertion_response.allowed_credentials, fn x ->
-          x[:id] == auth_assertion_response.credential_id
-        end)
+  def credential_public_key(allowed_credentials, credential_id) do
+    matched_credential = Enum.find(allowed_credentials, fn x -> x[:id] == credential_id end)
 
-      matched_credential[:public_key]
-    end
+    matched_credential[:public_key]
   end
 end

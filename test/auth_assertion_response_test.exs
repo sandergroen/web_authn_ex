@@ -83,16 +83,17 @@ defmodule AuthAssertionResponseTest do
       }
     ]
 
-    refute WebAuthnEx.AuthAssertionResponse.new(
-             @credential_id,
-             @authenticator_data,
-             @authenticator.signature,
-             @original_challenge,
-             @original_origin,
-             allowed_credentials,
-             @authenticator.rp_id,
-             @authenticator.client_data_json
-           )
+    assert {:error, "Validation of credential failed!"} =
+             WebAuthnEx.AuthAssertionResponse.new(
+               @credential_id,
+               @authenticator_data,
+               @authenticator.signature,
+               @original_challenge,
+               @original_origin,
+               allowed_credentials,
+               @authenticator.rp_id,
+               @authenticator.client_data_json
+             )
   end
 
   test "type validation is invalid if type is create instead of get" do
